@@ -1,6 +1,10 @@
 from django.core.exceptions import ImproperlyConfigured
 from braces.views import LoginRequiredMixin, UserPassesTestMixin
 
+__all__ = (
+    'ModulePermRequiredMixin', 'CancelURLMixin'
+)
+
 
 class ModulePermRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     module_name = None

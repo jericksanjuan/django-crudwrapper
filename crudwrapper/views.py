@@ -21,6 +21,11 @@ def get_form_valid_message
 def get_form_invalid_message
 """
 
+__all__ = (
+    'CreateView', 'UpdateView', 'DeleteView', 'FormSetMessagesMixin',
+    'ModelFormSetView', 'CreateWithInlinesView', 'UpdateWithInlinesView',
+)
+
 FORM_TEMPLATE = 'crudwrapper/base_form.html'
 DELETE_TEMPLATE = 'crudwrapper/base_delete.html'
 FORMSET_TEMPLATE = 'crudwrapper/base_formset.html'
