@@ -1,10 +1,18 @@
+import os
+import re
 from setuptools import setup
 
-import crudwrapper
+
+def get_version(package):
+    """
+    Return package version as listed in `__version__` in `init.py`.
+    """
+    init_py = open(os.path.join(package, '__init__.py')).read()
+    return re.search("^__version__ = ['\"]([^'\"]+)['\"]", init_py, re.MULTILINE).group(1)
 
 setup(
     name="django-crudwrapper",
-    version=crudwrapper.__version__,
+    version=get_version('crudwrapper'),
     description="Wrappers for Django CRUD work.",
     long_description="A collection of wrapper to 3rd party Django apps for CRUD work.",
     keywords="django, views, forms, mixins",
