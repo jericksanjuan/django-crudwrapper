@@ -1,0 +1,14 @@
+{% extends "crudwrapper/base.html" %}
+
+{% block content %}
+    <p>Are you sure you want to delete {{ object }}?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="btn-group">
+        <button type="submit" class="btn btn-danger" >Delete</button>
+        <a href="{{ cancel_url|default:'../../' }}" class="btn btn-link">
+            Go Back
+        </a>
+        </div>
+    </form>
+{% endblock content %}

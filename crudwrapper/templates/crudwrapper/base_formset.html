@@ -1,0 +1,26 @@
+{% extends "crudwrapper/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <form class="form-horizontal" method="post">{% csrf_token %}
+        <div class="btn-group pull-right">
+            <input class="btn btn-success" type="submit" value="{% if object %}Update{% else %}Create{% endif %}">
+            <a href="{{ cancel_url|default:'..' }}" class="btn btn-link">Back</a>
+        </div>
+        <div class="clearfix"></div>
+
+        {{ form }}
+        {% if formset %}
+            {% crispy formset helper %}
+        {% endif %}
+        {% for inline in inlines %}
+            {% crispy inline helper %}
+        {% endfor %}
+
+        <div class="btn-group pull-right">
+            <input class="btn btn-success" type="submit" value="{% if object %}Update{% else %}Create{% endif %}">
+            <a href="{{ cancel_url|default:'..' }}" class="btn btn-link">Back</a>
+        </div>
+    </form>
+{% endblock %}

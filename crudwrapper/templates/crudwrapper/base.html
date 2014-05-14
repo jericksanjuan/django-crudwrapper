@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <div class="container">
+      {% block base_container %}
+        <h1>You should override crudwrapper/base.html in your templates. </h1>
+        <h2>The only required template blocks by the default form templates is <code>content</code></h2>
+        <h2>To display form messages, include a block similar to the one below:</h2>
+        {% verbatim %}
+        <pre>
+
+          {% if messages %}
+            {% for message in messages %}
+                  {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </pre>
+        {% endverbatim %}
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-dismissable
+              {% if message.tags %}
+                {{ message.tags }}
+              {% else %}
+                alert-warning
+              {% endif %}"
+
+              {{ message.level_tag }} {# added in django 1.7 (dev)  #}
+            >
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock content %}
+
+      {% endblock base_container %}
+    </div> <!-- /container -->
+
+  </body>
+</html>
