@@ -1,8 +1,9 @@
 from django.forms import ModelForm, Form
+from django import forms
 from django.core.exceptions import ImproperlyConfigured
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, HTML
+from crispy_forms.layout import Layout, Div, HTML, Field
 
 
 __all__ = (
@@ -23,6 +24,11 @@ class CrispyFormMixin(object):
             self._helper = FormHelper(form=self)
             self._helper.form_tag = False
             self.set_layout()
+
+            self._helper.filter_by_widget(forms.TimeInput).wrap(Field, data_provide="datepicker", data_date_pickDate="false")
+            self._helper.filter_by_widget(forms.DateInput).wrap(
+                Field, data_provide="datepicker", data_date_pickTime="false", data_date_format="YYYY-MM-DD"
+            )
         return self._helper
 
     def set_layout(self):
