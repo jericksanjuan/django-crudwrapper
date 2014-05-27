@@ -1,8 +1,9 @@
 from django.utils.safestring import mark_safe
+from django.forms.models import BaseInlineFormSet
 
 from vanilla import CreateView, UpdateView, DeleteView
 from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
-from extra_views import ModelFormSetView, CreateWithInlinesView, UpdateWithInlinesView
+from extra_views import ModelFormSetView, CreateWithInlinesView, UpdateWithInlinesView, InlineFormSet
 
 from .forms import CrispyFormViewMixin, FormSetHelperViewMixin
 from .mixins import CancelURLMixin
@@ -24,6 +25,7 @@ def get_form_invalid_message
 __all__ = (
     'CreateView', 'UpdateView', 'DeleteView', 'FormSetMessagesMixin',
     'ModelFormSetView', 'CreateWithInlinesView', 'UpdateWithInlinesView',
+    'EmptyInlineFormSet',
 )
 
 FORM_TEMPLATE = 'crudwrapper/base_form.html'
@@ -159,3 +161,15 @@ class UpdateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperV
         msg = UPDATE_ERROR_MESSAGE.format(
             self.object)
         return mark_safe(msg)
+
+
+class EmptyBaseInlineFormSet(BaseInlineFormSet):
+    def get_queryset(self, *args, **kwargs):
+        return self.model._default_manager.get_queryset().none()
+
+
+class EmptyInlineFormSet(InlineFormSet):
+    """
+    Exclude existing objects from inline formset.
+    """
+    formset_class = EmptyBaseInlineFormSet
