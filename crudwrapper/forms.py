@@ -109,6 +109,9 @@ class FormSetHelperViewMixin(object):
     formset_panel_layout = False
     formset_panel_heading = ''
     formset_panel_css = "panel panel-default"
+    formset_form_class = 'form-horizontal'
+    formset_label_class = 'col-lg-2'
+    formset_field_class = 'col-lg-8'
 
     def get_formset_helper(self):
         """
@@ -138,5 +141,11 @@ class FormSetHelperViewMixin(object):
         if self.formset_panel_layout:
             helper.set_panel_layout(self.formset_fields, heading=self.get_formset_panel_heading(),
                                     css_class=self.formset_panel_css)
+
+        # add form, label and field css classes
+        helper.form_class = self.formset_form_class
+        helper.label_class = self.formset_label_class
+        helper.field_class = self.formset_field_class
+
         context[self.get_formset_helper_name()] = helper
         return context

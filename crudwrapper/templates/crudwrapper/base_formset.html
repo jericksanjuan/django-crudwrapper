@@ -10,7 +10,9 @@
         </div>
         <div class="clearfix"></div>
 
-        {% crispy form %}
+        {% if form %}
+            {% crispy form %}
+        {% endif %}
         {% if formset %}
             {% crispy formset helper %}
         {% endif %}

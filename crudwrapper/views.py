@@ -135,7 +135,7 @@ class ModelFormSetView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperViewMi
         return mark_safe(msg)
 
 
-class CreateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperViewMixin, CreateWithInlinesView):
+class CreateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperViewMixin, CrispyFormViewMixin, CreateWithInlinesView):
     template_name = FORMSET_TEMPLATE
 
     def get_form_valid_message(self):
@@ -149,7 +149,7 @@ class CreateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperV
         return mark_safe(msg)
 
 
-class UpdateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperViewMixin, UpdateWithInlinesView):
+class UpdateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperViewMixin, CrispyFormViewMixin, UpdateWithInlinesView):
     template_name = FORMSET_TEMPLATE
 
     def get_form_valid_message(self):
