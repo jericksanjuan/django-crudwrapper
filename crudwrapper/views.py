@@ -145,7 +145,7 @@ class CreateWithInlinesView(FormSetMessagesMixin, CancelURLMixin, FormSetHelperV
 
     def get_form_invalid_message(self):
         msg = UPDATE_ERROR_MESSAGE.format(
-            self.object)
+            self.model.__name__)
         return mark_safe(msg)
 
 
