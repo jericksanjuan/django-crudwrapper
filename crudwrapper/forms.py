@@ -12,6 +12,23 @@ __all__ = (
 )
 
 
+class ReadOnlyFieldsMixin(object):
+    readonly_fields = ()
+
+    def __init__(self, *args, **kwargs):
+        super(ReadOnlyFieldsMixin, self).__init__(*args, **kwargs)
+        for field in (field for name, field in self.fields.iteritems() if name in self.readonly_fields):
+            field.widget.attrs['disabled'] = 'true'
+            field.required = False
+
+    def clean(self):
+        cleaned_data = super(ReadOnlyFieldsMixin, self).clean()
+        for field in self.readonly_fields:
+            cleaned_data[field] = getattr(self.instance, field)
+
+        return cleaned_data
+
+
 class CrispyFormMixin(object):
 
     """
@@ -25,7 +42,8 @@ class CrispyFormMixin(object):
             self._helper.form_tag = False
             self.set_layout()
 
-            self._helper.filter_by_widget(forms.TimeInput).wrap(Field, data_provide="datepicker", data_date_pickDate="false")
+            self._helper.filter_by_widget(forms.TimeInput).wrap(
+                Field, data_provide="datepicker", data_date_pickDate="false")
             self._helper.filter_by_widget(forms.DateInput).wrap(
                 Field, data_provide="datepicker", data_date_pickTime="false", data_date_format="YYYY-MM-DD"
             )
@@ -36,7 +54,7 @@ class CrispyFormMixin(object):
         pass
 
 
-class CrispyModelForm(CrispyFormMixin, ModelForm):
+class CrispyModelForm(CrispyFormMixin, ReadOnlyFieldsMixin, ModelForm):
     pass
 
 
@@ -45,9 +63,11 @@ class CrispyForm(CrispyFormMixin, Form):
 
 
 class CrispyFormViewMixin(object):
+
     """
     Auto create a CrispyModelForm for views without form_class defined
     """
+
     def get_form_class(self):
         """
         Returns the form class to use in this view.
@@ -57,11 +77,12 @@ class CrispyFormViewMixin(object):
 
         form_class = super(CrispyFormViewMixin, self).get_form_class()
         crispy_form_class = type(form_class)(form_class.__name__,
-                                (CrispyFormMixin, form_class), dict(Meta=form_class.Meta))
+                                             (CrispyFormMixin, form_class), dict(Meta=form_class.Meta))
         return crispy_form_class
 
 
 class CrispyFormSetHelper(FormHelper):
+
     def __init__(self, *args, **kwargs):
         super(CrispyFormSetHelper, self).__init__(*args, **kwargs)
         self.form_tag = False
@@ -84,7 +105,8 @@ class CrispyFormSetHelper(FormHelper):
             layout[0].append(field)
 
         if heading:
-            layout[0].insert(0, HTML('<div class="panel-heading">{}</div>'.format(heading)))
+            layout[0].insert(
+                0, HTML('<div class="panel-heading">{}</div>'.format(heading)))
 
         return layout
 
@@ -93,6 +115,7 @@ class CrispyFormSetHelper(FormHelper):
 
 
 class FormSetHelperViewMixin(object):
+
     """
     Add crispy form helper to context for
 
@@ -118,7 +141,8 @@ class FormSetHelperViewMixin(object):
         Return a list of formset helpers always.
         """
         if not self.formset_helper:
-            raise ImproperlyConfigured("The formset_helper class cannot be None!")
+            raise ImproperlyConfigured(
+                "The formset_helper class cannot be None!")
         return self.formset_helper
 
     def get_formset_helper_name(self):
@@ -126,7 +150,8 @@ class FormSetHelperViewMixin(object):
         Always return a list of formset helper names.
         """
         if not self.formset_helper_name:
-            raise ImproperlyConfigured("The formset_helper_name cannot be blank!")
+            raise ImproperlyConfigured(
+                "The formset_helper_name cannot be blank!")
         return self.formset_helper_name
 
     def get_formset_panel_heading(self):
@@ -136,7 +161,8 @@ class FormSetHelperViewMixin(object):
         return self.formset_panel_heading
 
     def get_context_data(self, *args, **kwargs):
-        context = super(FormSetHelperViewMixin, self).get_context_data(*args, **kwargs)
+        context = super(FormSetHelperViewMixin, self).get_context_data(
+            *args, **kwargs)
         helper = self.get_formset_helper()()
         if self.formset_panel_layout:
             helper.set_panel_layout(self.formset_fields, heading=self.get_formset_panel_heading(),
