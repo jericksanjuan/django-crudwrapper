@@ -8,7 +8,7 @@ from crispy_forms.layout import Layout, Div, HTML, Field
 
 __all__ = (
     'CrispyFormMixin', 'CrispyModelForm', 'CrispyForm', 'CrispyFormViewMixin',
-    'CrispyFormSetHelper', 'FormSetHelperViewMixin'
+    'CrispyFormSetHelper', 'FormSetHelperViewMixin', 'ReadOnlyFieldsMixin',
 )
 
 
