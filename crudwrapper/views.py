@@ -6,7 +6,7 @@ from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
 from extra_views import ModelFormSetView, CreateWithInlinesView, UpdateWithInlinesView, InlineFormSet
 
 from .forms import CrispyFormViewMixin, FormSetHelperViewMixin
-from .mixins import CancelURLMixin
+from .mixins import CancelURLMixin, FormSetMessagesMixin
 
 """
 Wrapper views for reusable apps.
@@ -23,7 +23,7 @@ def get_form_invalid_message
 """
 
 __all__ = (
-    'CreateView', 'UpdateView', 'DeleteView', 'FormSetMessagesMixin',
+    'CreateView', 'UpdateView', 'DeleteView',
     'ModelFormSetView', 'CreateWithInlinesView', 'UpdateWithInlinesView',
     'EmptyInlineFormSet',
 )
@@ -88,37 +88,6 @@ class DeleteView(FormMessagesMixin, SuccessURLRedirectListMixin, CancelURLMixin,
         response = super(DeleteView, self).post(request, *args, **kwargs)
         self.messages.success(self.get_form_valid_message(),
                               fail_silently=True)
-        return response
-
-
-class FormSetMessagesMixin(FormMessagesMixin):
-    """
-    Extend FormMessagesMixin to also work on extra-views Views.
-    """
-
-    def forms_valid(self, form, inlines):
-        response = super(FormMessagesMixin, self).forms_valid(form, inlines)
-        self.messages.success(self.get_form_valid_message(),
-                              fail_silently=True)
-        return response
-
-    def forms_invalid(self, form, inlines):
-        response = super(FormSetMessagesMixin, self).forms_invalid(
-            form, inlines)
-        self.messages.error(self.get_form_invalid_message(),
-                            fail_silently=True)
-        return response
-
-    def formset_valid(self, formset):
-        response = super(FormSetMessagesMixin, self).formset_valid(formset)
-        self.messages.success(self.get_form_valid_message(),
-                              fail_silently=True)
-        return response
-
-    def formset_invalid(self, formset):
-        response = super(FormSetMessagesMixin, self).formset_invalid(formset)
-        self.messages.error(self.get_form_invalid_message(),
-                            fail_silently=True)
         return response
 
 
