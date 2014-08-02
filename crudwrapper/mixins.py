@@ -1,5 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 from braces.views import LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin
+from .forms import create_daterange_form
 
 __all__ = (
     'ModulePermRequiredMixin', 'CancelURLMixin',  'UserRelatedRequiredMixin',
@@ -54,6 +55,10 @@ class UserRelatedRequiredMixin(UserPassesTestMixin):
 
 
 class CancelURLMixin(object):
+    """
+    Let you define a cancel_url value and add it to context.
+    """
+
     cancel_url = '..'
 
     def get_cancel_url(self):
@@ -97,9 +102,21 @@ class FormSetMessagesMixin(FormMessagesMixin):
 
 
 class DateRangeQueryMixin(object):
+    """
+    The only required argument is the date_field. This will be the model field
+    that the date range will be used as lookup.
+
+    This will add a daterange_form to the context (default context name: daterange_form)
+    that you can easily include in your template.
+
+    If the daterange_form member is not given, a form will be created with the
+    fields for the values of start_date_q and end_date_q.
+    """
     date_field = None
     start_date_q = 'start_date'
     end_date_q = 'end_date'
+    daterange_form = None
+    daterange_form_context_name = 'daterange_form'
 
     def get_date_field(self):
         if self.date_field is None:
@@ -138,3 +155,32 @@ class DateRangeQueryMixin(object):
         qs = super(DateRangeQueryMixin, self).get_queryset()
         lookup_kwargs = self.get_date_range_lookup()
         return qs.filter(**lookup_kwargs)
+
+    def create_form(self):
+        return create_daterange_form(self.get_start_date_q(),
+                                     self.get_end_date_q())
+
+    def get_daterange_form(self):
+        """
+        Returns given daterange_form or automatically create it from the
+        start_date_q and end_date_q fields.
+        """
+        if self.daterange_form:
+            return self.daterange_form
+
+        return self.create_form()
+
+    def get_daterange_form_context_name(self):
+        if self.daterange_form_context_name is None:
+            raise ImproperlyConfigured(
+                "'DateRangeQueryMixin' requires "
+                "'daterange_form_context_name'.")
+        return self.daterange_form_context_name
+
+    def get_context_data(self, *args, **kwargs):
+        """
+        Add the daterange_form
+        """
+        context = super(DateRangeQueryMixin, self).get_context_data(*args, **kwargs)
+        context[self.get_daterange_form_context_name()] = self.get_daterange_form()(self.request.GET)
+        return context

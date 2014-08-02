@@ -12,6 +12,24 @@ __all__ = (
 )
 
 
+def create_daterange_form(*args):
+    """
+    Create a dynamic DateRangeForm based on fields given.
+    """
+    fields = args
+
+    class DateRangeForm(CrispyForm):
+        def __init__(self, *args, **kwargs):
+            super(DateRangeForm, self).__init__(*args, **kwargs)
+            for field in fields:
+                self.fields[field] = forms.DateField(required=False)
+
+        def set_layout(self):
+            self.helper.disable_csrf = True
+
+    return DateRangeForm
+
+
 class ReadOnlyFieldsMixin(object):
     readonly_fields = ()
 
