@@ -2,6 +2,12 @@
 
 {% block content %}
     <p>Are you sure you want to delete {{ object }}?</p>
+    <p>This will delete the following:</p>
+    <ul class="list-inline">
+    {% for relobj in related_objects %}
+        <li>{{ relobj }}</li>
+    {% endfor %}
+    </ul>
     <form method="POST">
         {% csrf_token %}
         <div class="btn-group">

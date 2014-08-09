@@ -1,5 +1,7 @@
 from django.utils.safestring import mark_safe
 from django.forms.models import BaseInlineFormSet
+from django.db import router
+from django.contrib.admin.util import NestedObjects
 
 from vanilla import CreateView, UpdateView, DeleteView
 from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
@@ -81,6 +83,14 @@ class DeleteView(FormMessagesMixin, SuccessURLRedirectListMixin, CancelURLMixin,
         msg = DELETE_ERROR_MESSAGE.format(
             self.object)
         return mark_safe(msg)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(DeleteView, self).get_context_data(*args, **kwargs)
+        using = router.db_for_write(self.model)
+        collector = NestedObjects(using=using)
+        collector.collect([self.object])
+        context['related_objects'] = collector.nested()
+        return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
