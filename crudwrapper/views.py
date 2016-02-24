@@ -1,7 +1,10 @@
 from django.utils.safestring import mark_safe
 from django.forms.models import BaseInlineFormSet
 from django.db import router
-from django.contrib.admin.util import NestedObjects
+try:
+    from django.contrib.admin.util import NestedObjects
+except ImportError:
+    from django.contrib.admin.utils import NestedObjects
 
 from vanilla import CreateView, UpdateView, DeleteView
 from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
