@@ -28,11 +28,11 @@ def get_form_valid_message
 def get_form_invalid_message
 """
 
-# __all__ = (
-#     'CreateView', 'UpdateView', 'DeleteView',
-#     'ModelFormSetView', 'CreateWithInlinesView', 'UpdateWithInlinesView',
-#     'EmptyInlineFormSet',
-# )
+__all__ = (
+    'CreateView', 'UpdateView', 'DeleteView',
+    'ModelFormSetView', 'CreateWithInlinesView', 'UpdateWithInlinesView',
+    'EmptyInlineFormSet',
+)
 
 PREFIX = 'CW'
 FORM_TEMPLATE = getattr(
