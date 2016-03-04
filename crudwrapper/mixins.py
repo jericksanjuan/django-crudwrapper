@@ -4,7 +4,7 @@ from .forms import create_daterange_form
 
 __all__ = (
     'ModulePermRequiredMixin', 'CancelURLMixin',  'UserRelatedRequiredMixin',
-    'FormSetMessagesMixin', 'DateRangeQueryMixin'
+    'FormSetMessagesMixin', 'DateRangeQueryMixin', 'ContentStyleMixin',
 )
 
 
@@ -67,6 +67,18 @@ class CancelURLMixin(object):
     def get_context_data(self, **kwargs):
         ctx = super(CancelURLMixin, self).get_context_data(**kwargs)
         ctx['cancel_url'] = self.get_cancel_url()
+        return ctx
+
+
+class ContentStyleMixin(object):
+    contentcss_class = 's12'
+
+    def get_contentcss_class(self):
+        return self.contentcss_class
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ContentStyleMixin, self).get_context_data(**kwargs)
+        ctx['contentcss_class'] = self.get_contentcss_class()
         return ctx
 
 
