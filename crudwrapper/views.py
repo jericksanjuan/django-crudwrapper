@@ -6,9 +6,10 @@ try:
     from django.contrib.admin.util import NestedObjects
 except ImportError:
     from django.contrib.admin.utils import NestedObjects
+from django.core.urlresolvers import reverse
 
 from vanilla import CreateView, UpdateView, DeleteView
-from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
+from braces.views import FormMessagesMixin
 from extra_views import ModelFormSetView, CreateWithInlinesView, UpdateWithInlinesView, InlineFormSet
 
 from .forms import CrispyFormViewMixin, FormSetHelperViewMixin
@@ -57,6 +58,15 @@ DELETE_MESSAGE = getattr(
 DELETE_ERROR_MESSAGE = getattr(
     settings, PREFIX + '_DELETE_ERROR_MESSAGE',
     u"Something went wrong. {} was not deleted")
+
+
+class SuccessURLRedirectListMixin(object):
+    success_list_url = None
+
+    def get_success_url(self):
+        if self.success_list_url is not None:
+            return reverse(self.success_list_url)
+        return super(SuccessURLRedirectListMixin, self).get_success_url()
 
 
 class CreateView(FormMessagesMixin, SuccessURLRedirectListMixin, CancelURLMixin, CrispyFormViewMixin, CreateView):
