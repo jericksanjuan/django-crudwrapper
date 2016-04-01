@@ -1,10 +1,15 @@
 from django.utils.safestring import mark_safe
 from django.forms.models import BaseInlineFormSet
 from django.db import router
-from django.contrib.admin.util import NestedObjects
+from django.conf import settings
+try:
+    from django.contrib.admin.util import NestedObjects
+except ImportError:
+    from django.contrib.admin.utils import NestedObjects
+from django.core.urlresolvers import reverse
 
 from vanilla import CreateView, UpdateView, DeleteView
-from braces.views import FormMessagesMixin, SuccessURLRedirectListMixin
+from braces.views import FormMessagesMixin
 from extra_views import ModelFormSetView, CreateWithInlinesView, UpdateWithInlinesView, InlineFormSet
 
 from .forms import CrispyFormViewMixin, FormSetHelperViewMixin
@@ -30,17 +35,38 @@ __all__ = (
     'EmptyInlineFormSet',
 )
 
-FORM_TEMPLATE = 'crudwrapper/base_form.html'
-DELETE_TEMPLATE = 'crudwrapper/base_delete.html'
-FORMSET_TEMPLATE = 'crudwrapper/base_formset.html'
+PREFIX = 'CW'
+FORM_TEMPLATE = getattr(
+    settings, PREFIX + '_FORM_TEMPLATE', 'crudwrapper/base_form.html')
+DELETE_TEMPLATE = getattr(
+    settings, PREFIX + '_DELETE_TEMPLATE', 'crudwrapper/base_delete.html')
+FORMSET_TEMPLATE = getattr(
+    settings, PREFIX + '_FORMSET_TEMPLATE', 'crudwrapper/base_formset.html')
 
-DEFAULT_ERROR_MESSAGE = u"Something went wrong. {} was not saved"
-CREATE_MESSAGE = u"<small><em>{}</em></small> created successfully"
-CREATE_ERROR_MESSAGE = DEFAULT_ERROR_MESSAGE
-UPDATE_MESSAGE = u"<small><em>{}</em></small> updated successfully"
-UPDATE_ERROR_MESSAGE = DEFAULT_ERROR_MESSAGE
-DELETE_MESSAGE = u"<small><em>{}</em></small> deleted successfully"
-DELETE_ERROR_MESSAGE = u"Something went wrong. <small><em>{}</em></small> was not deleted"
+DEFAULT_ERROR_MESSAGE = getattr(
+    settings, PREFIX + '_DEFAULT_ERROR_MESSAGE', u"Something went wrong. {} was not saved")
+CREATE_MESSAGE = getattr(
+    settings, PREFIX + '_CREATE_MESSAGE', u"{} created successfully")
+CREATE_ERROR_MESSAGE = getattr(
+    settings, PREFIX + '_CREATE_ERROR_MESSAGE', DEFAULT_ERROR_MESSAGE)
+UPDATE_MESSAGE = getattr(
+    settings, PREFIX + '_UPDATE_MESSAGE', u"{} updated successfully")
+UPDATE_ERROR_MESSAGE = getattr(
+    settings, PREFIX + '_UPDATE_ERROR_MESSAGE', DEFAULT_ERROR_MESSAGE)
+DELETE_MESSAGE = getattr(
+    settings, PREFIX + '_DELETE_MESSAGE', u"{} deleted successfully")
+DELETE_ERROR_MESSAGE = getattr(
+    settings, PREFIX + '_DELETE_ERROR_MESSAGE',
+    u"Something went wrong. {} was not deleted")
+
+
+class SuccessURLRedirectListMixin(object):
+    success_list_url = None
+
+    def get_success_url(self):
+        if self.success_list_url is not None:
+            return reverse(self.success_list_url)
+        return super(SuccessURLRedirectListMixin, self).get_success_url()
 
 
 class CreateView(FormMessagesMixin, SuccessURLRedirectListMixin, CancelURLMixin, CrispyFormViewMixin, CreateView):
